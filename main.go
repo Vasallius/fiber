@@ -97,7 +97,7 @@ func getBitcoinData() error {
 		return fmt.Errorf("reading symbol data failed %s", err.Error())
 	}
 
-	var data [][]interface{}
+	var data []SymbolData
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		println("error occurred here!", err.Error())
@@ -107,20 +107,21 @@ func getBitcoinData() error {
 	// Convert the data to the desired type
 	var bitcoinData []SymbolData
 	for _, item := range data {
-		var entry SymbolData
-		// Convert the Time field from float64 to int64
-		entry.Time = int64(item[0].(float64))
-		entry.Open = item[1].(string)
-		entry.High = item[2].(string)
-		entry.Low = item[3].(string)
-		entry.Close = item[4].(string)
-		entry.Volume = item[5].(string)
-		entry.CloseTime = int64(item[6].(float64))
-		entry.QuoteAssetVolume = item[7].(string)
-		entry.NumberOfTrades = int(item[8].(float64))
-		entry.TakerBuyBaseAssetVol = item[9].(string)
-		entry.TakerBuyQuoteAssetVol = item[10].(string)
-		entry.Ignore = item[11].(string)
+		// Access the fields of `item` directly
+		entry := SymbolData{
+			Time:                  item.Time,
+			Open:                  item.Open,
+			High:                  item.High,
+			Low:                   item.Low,
+			Close:                 item.Close,
+			Volume:                item.Volume,
+			CloseTime:             item.CloseTime,
+			QuoteAssetVolume:      item.QuoteAssetVolume,
+			NumberOfTrades:        item.NumberOfTrades,
+			TakerBuyBaseAssetVol:  item.TakerBuyBaseAssetVol,
+			TakerBuyQuoteAssetVol: item.TakerBuyQuoteAssetVol,
+			Ignore:                item.Ignore,
+		}
 
 		bitcoinData = append(bitcoinData, entry)
 	}
