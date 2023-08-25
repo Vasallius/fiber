@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,9 +23,10 @@ func main() {
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
-			"message": "Hello, World! - Gopher",
+			"message": "rey kengkoy bleh bleh bleh",
 		})
 	})
+	fmt.Println("test")
 
 	app.Listen(getPort())
 }
