@@ -23,10 +23,10 @@ func main() {
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
-			"message": "rey kengkoy bleh bleh bleh",
+			"message": "HELLO WORLD PLEASE WORK",
 		})
 	})
 	fmt.Println("test")
-
+	SayHello()
 	app.Listen(getPort())
 }
