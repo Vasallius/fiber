@@ -72,18 +72,18 @@ func getBitcoinData() error {
 
 	response, err := http.Get(url)
 	if err != nil {
-		return fmt.Errorf("error sending GET request: %s", err.Error())
+		return fmt.Errorf("fetching symbol data failed %s", err.Error())
 	}
 	defer response.Body.Close()
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return fmt.Errorf("error reading response body: %s", err.Error())
+		return fmt.Errorf("reading symbol data failed %s", err.Error())
 	}
 	var data [][]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		println("error parsing JSON response", err.Error())
+		println("error occured here!", err.Error())
 		return fmt.Errorf("error parsing JSON response: %s", err.Error())
 	}
 
