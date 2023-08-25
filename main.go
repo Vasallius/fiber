@@ -93,6 +93,7 @@ func getBitcoinData() error {
 	defer response.Body.Close()
 
 	body, err := io.ReadAll(response.Body)
+	fmt.Println(string(body))
 	if err != nil {
 		return fmt.Errorf("reading symbol data failed %s", err.Error())
 	}
