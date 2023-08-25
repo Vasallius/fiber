@@ -2,20 +2,20 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-// func getPort() string {
-// 	// port := os.Getenv("PORT")
-// 	// if port == "" {
-// 	// 	port = ":3000"
-// 	// } else {
-// 	// 	port = ":" + port
-// 	// }
-// 	// fmt.Println(port)
-// 	return ""
-// }
+func getPort() string {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = ":3000"
+	} else {
+		port = ":" + port
+	}
+	return port
+}
 
 func main() {
 	app := fiber.New()
@@ -27,5 +27,5 @@ func main() {
 	})
 	fmt.Println("test")
 	SayHello()
-	app.Listen(":3000")
+	app.Listen(getPort())
 }
