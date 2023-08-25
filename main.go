@@ -96,6 +96,6 @@ func main() {
 	// Print the value of the "data" key
 	// fmt.Println(dataValue)
 
-	// app.Listen("0.0.0.0" + getPort())
+	app.Listen("0.0.0.0" + getPort())
 
 }
