@@ -21,13 +21,15 @@ func getPort() string {
 }
 
 func processBitcoinData(data [][]interface{}) {
+	closePrices := make([]string, 0)
+
 	for _, item := range data {
 		// Access individual elements of each item in the data array
 		timestamp := item[0]
 		open := item[1]
 		high := item[2]
 		low := item[3]
-		close := item[4]
+		close := item[4].(string)
 
 		// Do something with the data, such as printing it
 		fmt.Println("Timestamp:", timestamp)
@@ -35,13 +37,38 @@ func processBitcoinData(data [][]interface{}) {
 		fmt.Println("High:", high)
 		fmt.Println("Low:", low)
 		fmt.Println("Close:", close)
-
-		// Add your own logic here to process the data
+		closePrices = append(closePrices, close)
+		// Add your own logic here to process the data, err.Error()
 	}
+	fmt.Println(closePrices)
+}
+
+func getSymbols() error {
+	url := "https://fapi.binance.com/fapi/v1/exchangeInfo"
+	response, err := http.Get(url)
+	if err != nil {
+		return fmt.Errorf("error sending GET request: %w", err)
+	}
+
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return fmt.Errorf("error reading response body: %w", err)
+	}
+
+	var exchangeInfo map[string]interface{}
+	if err := json.Unmarshal(body, &exchangeInfo); err != nil {
+		return fmt.Errorf("error parsing JSON response: %w", err)
+	}
+
+	// Do something with the symbols...
+
+	return nil
 }
 
 func getBitcoinData() error {
-	url := "https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=5m&limit=5"
+	url := "https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=5m&limit=20"
 
 	response, err := http.Get(url)
 	if err != nil {
@@ -74,6 +101,6 @@ func main() {
 		})
 	})
 	getBitcoinData()
-	// app.Listen("0.0.0.0" + getPort())
+	app.Listen("0.0.0.0" + getPort())
 
 }
