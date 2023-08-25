@@ -27,5 +27,6 @@ func main() {
 	})
 	fmt.Println("test")
 	SayHello()
-	app.Listen(getPort())
+	app.Listen("0.0.0.0" + getPort())
+
 }
