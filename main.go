@@ -20,16 +20,16 @@ func getPort() string {
 	return port
 }
 
-func processBitcoinData(data [][]interface{}) {
-	closePrices := make([]string, 0)
+func processBitcoinData(data []SymbolData) {
+	closePrices := make([]string, len(data))
 
 	for _, item := range data {
-		// Access individual elements of each item in the data array
-		timestamp := item[0]
-		open := item[1]
-		high := item[2]
-		low := item[3]
-		close := item[4].(string)
+		// Access individual elements of each item
+		timestamp := item.Time
+		open := item.Open
+		high := item.High
+		low := item.Low
+		close := item.Close
 
 		// Do something with the data, such as printing it
 		fmt.Println("Timestamp:", timestamp)
@@ -67,6 +67,21 @@ func getSymbols() error {
 	return nil
 }
 
+type SymbolData struct {
+	Time                  int64
+	Open                  string
+	High                  string
+	Low                   string
+	Close                 string
+	Volume                string
+	CloseTime             int64
+	QuoteAssetVolume      string
+	NumberOfTrades        int
+	TakerBuyBaseAssetVol  string
+	TakerBuyQuoteAssetVol string
+	Ignore                string
+}
+
 func getBitcoinData() error {
 	url := "https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=5m&limit=20"
 
@@ -80,17 +95,37 @@ func getBitcoinData() error {
 	if err != nil {
 		return fmt.Errorf("reading symbol data failed %s", err.Error())
 	}
-	fmt.Println(body)
+
 	var data [][]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		println("error occured here!", err.Error())
-
+		println("error occurred here!", err.Error())
 		return fmt.Errorf("error parsing JSON response: %s", err.Error())
 	}
 
+	// Convert the data to the desired type
+	var bitcoinData []SymbolData
+	for _, item := range data {
+		var entry SymbolData
+		// Convert the Time field from float64 to int64
+		entry.Time = int64(item[0].(float64))
+		entry.Open = item[1].(string)
+		entry.High = item[2].(string)
+		entry.Low = item[3].(string)
+		entry.Close = item[4].(string)
+		entry.Volume = item[5].(string)
+		entry.CloseTime = int64(item[6].(float64))
+		entry.QuoteAssetVolume = item[7].(string)
+		entry.NumberOfTrades = int(item[8].(float64))
+		entry.TakerBuyBaseAssetVol = item[9].(string)
+		entry.TakerBuyQuoteAssetVol = item[10].(string)
+		entry.Ignore = item[11].(string)
+
+		bitcoinData = append(bitcoinData, entry)
+	}
+
 	// Call the processBitcoinData function with the retrieved data
-	processBitcoinData(data)
+	processBitcoinData(bitcoinData)
 
 	return nil
 }
