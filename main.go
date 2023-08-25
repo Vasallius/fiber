@@ -20,28 +20,28 @@ func getPort() string {
 	return port
 }
 
-func processBitcoinData(data []SymbolData) {
-	closePrices := make([]string, len(data))
+// func processBitcoinData(data []SymbolData) {
+// 	closePrices := make([]string, len(data))
 
-	for _, item := range data {
-		// Access individual elements of each item
-		timestamp := item.Time
-		open := item.Open
-		high := item.High
-		low := item.Low
-		close := item.Close
+// 	for _, item := range data {
+// 		// Access individual elements of each item
+// 		timestamp := item.Time
+// 		open := item.Open
+// 		high := item.High
+// 		low := item.Low
+// 		close := item.Close
 
-		// Do something with the data, such as printing it
-		fmt.Println("Timestamp:", timestamp)
-		fmt.Println("Open:", open)
-		fmt.Println("High:", high)
-		fmt.Println("Low:", low)
-		fmt.Println("Close:", close)
-		closePrices = append(closePrices, close)
-		// Add your own logic here to process the data, err.Error()
-	}
-	fmt.Println(closePrices)
-}
+// 		// Do something with the data, such as printing it
+// 		fmt.Println("Timestamp:", timestamp)
+// 		fmt.Println("Open:", open)
+// 		fmt.Println("High:", high)
+// 		fmt.Println("Low:", low)
+// 		fmt.Println("Close:", close)
+// 		closePrices = append(closePrices, close)
+// 		// Add your own logic here to process the data, err.Error()
+// 	}
+// 	fmt.Println(closePrices)
+// }
 
 func getSymbols() error {
 	url := "https://fapi.binance.com/fapi/v1/exchangeInfo"
@@ -97,37 +97,18 @@ func getBitcoinData() error {
 		return fmt.Errorf("reading symbol data failed %s", err.Error())
 	}
 
-	var data []SymbolData
+	var data [][]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		println("error occurred here!", err.Error())
 		return fmt.Errorf("error parsing JSON response: %s", err.Error())
 	}
+	fmt.Println(data)
 
-	// Convert the data to the desired type
-	var bitcoinData []SymbolData
-	for _, item := range data {
-		// Access the fields of `item` directly
-		entry := SymbolData{
-			Time:                  item.Time,
-			Open:                  item.Open,
-			High:                  item.High,
-			Low:                   item.Low,
-			Close:                 item.Close,
-			Volume:                item.Volume,
-			CloseTime:             item.CloseTime,
-			QuoteAssetVolume:      item.QuoteAssetVolume,
-			NumberOfTrades:        item.NumberOfTrades,
-			TakerBuyBaseAssetVol:  item.TakerBuyBaseAssetVol,
-			TakerBuyQuoteAssetVol: item.TakerBuyQuoteAssetVol,
-			Ignore:                item.Ignore,
-		}
-
-		bitcoinData = append(bitcoinData, entry)
+	for _, symbol := range data {
+		// Prints closing prices
+		fmt.Println(symbol[4])
 	}
-
-	// Call the processBitcoinData function with the retrieved data
-	processBitcoinData(bitcoinData)
 
 	return nil
 }
