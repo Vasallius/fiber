@@ -83,6 +83,7 @@ type SymbolData struct {
 }
 
 func getBitcoinData() error {
+	fmt.Println("print this")
 	url := "https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=5m&limit=20"
 
 	response, err := http.Get(url)
