@@ -20,30 +20,51 @@ func getPort() string {
 	return port
 }
 
-type Symbol struct {
-	BaseCoin            string   `json:"baseCoin"`
-	BuyLimitPriceRatio  string   `json:"buyLimitPriceRatio"`
-	FeeRateUpRatio      string   `json:"feeRateUpRatio"`
-	LimitOpenTime       string   `json:"limitOpenTime"`
-	MaintainTime        string   `json:"maintainTime"`
-	MakerFeeRate        string   `json:"makerFeeRate"`
-	MinTradeNum         string   `json:"minTradeNum"`
-	OffTime             string   `json:"offTime"`
-	OpenCostUpRatio     string   `json:"openCostUpRatio"`
-	PriceEndStep        string   `json:"priceEndStep"`
-	PricePlace          string   `json:"pricePlace"`
-	QuoteCoin           string   `json:"quoteCoin"`
-	SellLimitPriceRatio string   `json:"sellLimitPriceRatio"`
-	SizeMultiplier      string   `json:"sizeMultiplier"`
-	SupportMarginCoins  []string `json:"supportMarginCoins"`
-	Symbol              string   `json:"symbol"`
-	SymbolName          string   `json:"symbolName"`
-	SymbolStatus        string   `json:"symbolStatus"`
-	SymbolType          string   `json:"symbolType"`
-	TakerFeeRate        string   `json:"takerFeeRate"`
-	VolumePlace         string   `json:"volumePlace"`
+func processBitcoinData(data [][]interface{}) {
+	for _, item := range data {
+		// Access individual elements of each item in the data array
+		timestamp := item[0]
+		open := item[1]
+		high := item[2]
+		low := item[3]
+		close := item[4]
+
+		// Do something with the data, such as printing it
+		fmt.Println("Timestamp:", timestamp)
+		fmt.Println("Open:", open)
+		fmt.Println("High:", high)
+		fmt.Println("Low:", low)
+		fmt.Println("Close:", close)
+
+		// Add your own logic here to process the data
+	}
 }
 
+func getBitcoinData() error {
+	url := "https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=5m&limit=5"
+
+	response, err := http.Get(url)
+	if err != nil {
+		return fmt.Errorf("error sending GET request: %s", err.Error())
+	}
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return fmt.Errorf("error reading response body: %s", err.Error())
+	}
+	var data [][]interface{}
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		println("error parsing JSON response", err.Error())
+		return fmt.Errorf("error parsing JSON response: %s", err.Error())
+	}
+
+	// Call the processBitcoinData function with the retrieved data
+	processBitcoinData(data)
+
+	return nil
+}
 func main() {
 	app := fiber.New()
 
@@ -52,50 +73,7 @@ func main() {
 			"message": "HELLO WORLD PLEASE WORK",
 		})
 	})
-
-	url := "https://api.bitget.com/api/mix/v1/market/contracts?productType=umcbl"
-
-	response, err := http.Get(url)
-	if err != nil {
-		fmt.Printf("Error sending GET request: %s", err.Error())
-	}
-	defer response.Body.Close()
-
-	body, err := io.ReadAll(response.Body)
-
-	if err != nil {
-		fmt.Printf("Error reading response body: %s", err.Error())
-		return
-	}
-
-	type Data struct {
-		Data []map[string]interface{} `json:"data"`
-	}
-
-	var data Data
-	err2 := json.Unmarshal(body, &data)
-	if err != nil {
-		fmt.Println("Error:", err2)
-		return
-	}
-
-	for _, item := range data.Data {
-		baseCoin := item["baseCoin"].(string)
-		// Extract other fields as needed
-		fmt.Println("Base Coin:", baseCoin)
-	}
-	// Access the "data" key using type assertion
-	// dataValue, ok := data["data"].(map[string]interface{})
-	// if !ok {
-	// 	fmt.Println("Failed to assert data type")
-	// 	fmt.Println(data)
-
-	// 	return
-	// }
-
-	// Print the value of the "data" key
-	// fmt.Println(dataValue)
-
-	app.Listen("0.0.0.0" + getPort())
+	getBitcoinData()
+	// app.Listen("0.0.0.0" + getPort())
 
 }
