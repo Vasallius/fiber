@@ -80,10 +80,12 @@ func getBitcoinData() error {
 	if err != nil {
 		return fmt.Errorf("reading symbol data failed %s", err.Error())
 	}
+	fmt.Println(body)
 	var data [][]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		println("error occured here!", err.Error())
+
 		return fmt.Errorf("error parsing JSON response: %s", err.Error())
 	}
 
